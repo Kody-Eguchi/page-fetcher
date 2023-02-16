@@ -1,33 +1,40 @@
 const request = require('request');
 const fs = require('fs');
+
 const args = process.argv.slice(2);
 const url = args[0];
 const path = args[1];
 
 console.log(url, path);
 
-const fetcher = function(url, path, callback) {
+const fetcher = function(url, path) {
   request(url, (err, res, body) => {
     console.log(err);
     console.log(res);
     console.log(body);
     if (!err) {
-      callback(path, body);
+      // callback(path, body);
+      fs.writeFile(path, body, err => {
+        if (err) {
+          console.error(err);
+        }
+        console.log(`Downloaded and saved ${body.length} bytes to ${path}`);
+      });
     }
   });
 };
 
 
-const callback = (path, content) => {
-  fs.writeFile(path, content, err => {
-    if (err) {
-      console.error(err);
-    }
-    console.log(`Downloaded and saved 3261 bytes to ${path}`);
-  });
-};
+// const callback = (path, content) => {
+//   fs.writeFile(path, content, err => {
+//     if (err) {
+//       console.error(err);
+//     }
+//     console.log(`Downloaded and saved 3261 bytes to ${path}`);
+//   });
+// };
 
-fetcher(url, path, callback);
+fetcher(url, path);
 
 //fetcher => request => writeFile
 
